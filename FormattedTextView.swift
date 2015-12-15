@@ -115,7 +115,14 @@ class FormattedTextView: UITextField {
         
         if formatPattern.characters.count > 0 {
             
+            if formatPattern.characters.count > 0 {
+            
             let unformattedString = removeUnallowedChars(text)
+            
+            if unformattedString.characters.count == 0 {
+                self.text = nil
+                return
+            }
             
             var resultText = ""
             
