@@ -109,13 +109,15 @@ class FormattedTextView: UITextField {
     }
     
     func textDidChange() {
+       evaluateFormat()
+    }
+    
+    private func evaluateFormat() {
         guard let text = text, let formatPattern = formatPattern, let replacementChar = replacementChar where text != "" else {
             return
         }
         
         if formatPattern.characters.count > 0 {
-            
-            if formatPattern.characters.count > 0 {
             
             let unformattedString = removeUnallowedChars(text)
             
