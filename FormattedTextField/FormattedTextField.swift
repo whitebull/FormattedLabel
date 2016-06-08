@@ -32,7 +32,7 @@ SOFTWARE.
 
 import UIKit
 
-class FormattedTextField: UITextField {
+public class FormattedTextField: UITextField {
     
     private var restrictionChars: NSCharacterSet?
     
