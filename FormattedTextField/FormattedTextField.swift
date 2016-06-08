@@ -40,7 +40,7 @@ public class FormattedTextField: UITextField {
     
     private var formatPattern: String?
     
-    override var text: String? {
+    override public var text: String? {
         didSet {
             if !isEvaluating {
                 isEvaluating = true
@@ -54,16 +54,16 @@ public class FormattedTextField: UITextField {
     // MARK: API
     
     
-    func textFormat(pattern: String, replacement: Character) {
+    public func textFormat(pattern: String, replacement: Character) {
         formatPattern = pattern
         replacementChar = replacement
     }
     
-    func restrictToCharacterSet(restrictions: NSCharacterSet) {
+    public func restrictToCharacterSet(restrictions: NSCharacterSet) {
         restrictionChars = restrictions
     }
     
-    func unformattedString() -> String? {
+    public func unformattedString() -> String? {
         guard let text = text, let formatPattern = formatPattern, let replacementChar = replacementChar where text != "" else {
             return nil
         }
@@ -103,7 +103,7 @@ public class FormattedTextField: UITextField {
         setup()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
@@ -119,7 +119,7 @@ public class FormattedTextField: UITextField {
     }
     
     func textDidChange() {
-       evaluateFormat()
+        evaluateFormat()
     }
     
     private func evaluateFormat() {
