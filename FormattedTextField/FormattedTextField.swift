@@ -1,6 +1,6 @@
 //
-//  FormattedTextView.swift
-//  
+//  FormattedTextField.swift
+//
 //
 //  Created by Christian Kiefl on 16.11.15.
 //  Copyright © 2015 Christian Kiefl. All rights reserved.
@@ -32,13 +32,24 @@ SOFTWARE.
 
 import UIKit
 
-class FormattedTextView: UITextField {
+class FormattedTextField: UITextField {
     
     private var restrictionChars: NSCharacterSet?
     
     private var replacementChar: Character?
     
     private var formatPattern: String?
+    
+    override var text: String? {
+        didSet {
+            if !isEvaluating {
+                isEvaluating = true
+                textDidChange()
+            }
+        }
+    }
+    
+    var isEvaluating = false
     
     // MARK: API
     
@@ -65,8 +76,7 @@ class FormattedTextView: UITextField {
             var charIndex = text.startIndex
             
             while true {
-                
-                let formattingPatternRange = Range(start: formatterIndex, end: formatterIndex.advancedBy(1) )
+                let formattingPatternRange = formatterIndex ..< formatterIndex.advancedBy(1)
                 
                 if formatPattern.substringWithRange(formattingPatternRange) == String(replacementChar) {
                     
@@ -74,8 +84,8 @@ class FormattedTextView: UITextField {
                     
                 }
                 
-                ++formatterIndex
-                ++charIndex
+                formatterIndex = formatterIndex.advancedBy(1)
+                charIndex = charIndex.advancedBy(1)
                 
                 if formatterIndex >= formatPattern.endIndex || charIndex >= text.endIndex {
                     break
@@ -101,7 +111,7 @@ class FormattedTextView: UITextField {
     // MARK: implementation
     
     private func setup() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "textDidChange", name: UITextFieldTextDidChangeNotification, object: self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(FormattedTextField.textDidChange), name: UITextFieldTextDidChangeNotification, object: self)
     }
     
     deinit {
@@ -113,6 +123,9 @@ class FormattedTextView: UITextField {
     }
     
     private func evaluateFormat() {
+        defer {
+            isEvaluating = false
+        }
         guard let text = text, let formatPattern = formatPattern, let replacementChar = replacementChar where text != "" else {
             return
         }
@@ -133,7 +146,7 @@ class FormattedTextView: UITextField {
             
             while true {
                 
-                let formattingPatternRange = Range(start: formatterIndex, end: formatterIndex.advancedBy(1) )
+                let formattingPatternRange = formatterIndex ..< formatterIndex.advancedBy(1)
                 
                 if formatPattern.substringWithRange(formattingPatternRange) != String(replacementChar) {
                     
@@ -141,12 +154,12 @@ class FormattedTextView: UITextField {
                     
                 } else {
                     
-                    let pureStringRange = Range(start: charIndex, end: charIndex.advancedBy(1))
+                    let pureStringRange = charIndex ..< charIndex.advancedBy(1)
                     resultText = resultText.stringByAppendingString(unformattedString.substringWithRange(pureStringRange))
-                    charIndex++
+                    charIndex = charIndex.advancedBy(1)
                 }
                 
-                ++formatterIndex
+                formatterIndex = formatterIndex.advancedBy(1)
                 
                 if formatterIndex >= formatPattern.endIndex || charIndex >= unformattedString.endIndex {
                     break
